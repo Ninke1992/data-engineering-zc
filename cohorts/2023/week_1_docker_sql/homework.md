@@ -19,6 +19,7 @@ Which tag has the following text? - *Write the image ID to the file*
 - `--idimage string`
 - `--idfile string`
 
+ANSWER: --iidfile string
 
 ## Question 2. Understanding docker first run 
 
@@ -30,6 +31,8 @@ How many python packages/modules are installed?
 - 6
 - 3
 - 7
+
+ANSWER: 3 packages are installed
 
 # Prepare Postgres
 
@@ -58,6 +61,19 @@ Remember that `lpep_pickup_datetime` and `lpep_dropoff_datetime` columns are in 
 - 17630
 - 21090
 
+SELECT 
+	CAST(lpep_pickup_datetime AS DATE) AS "day",
+	COUNT(CAST(lpep_pickup_datetime AS DATE))
+FROM 
+	green_taxi_trips t
+WHERE 
+	CAST(lpep_pickup_datetime AS DATE) = CAST(lpep_dropoff_datetime AS DATE)
+GROUP BY
+	1
+ORDER BY day ASC
+
+ANSWER: 20530
+
 ## Question 4. Largest trip for each day
 
 Which was the day with the largest trip distance
@@ -68,6 +84,17 @@ Use the pick up time for your calculations.
 - 2019-01-15
 - 2019-01-10
 
+SELECT 
+	CAST(lpep_pickup_datetime AS DATE) AS "day",
+	max(trip_distance)
+FROM 
+	green_taxi_trips t
+GROUP BY
+	1
+ORDER BY max(trip_distance) DESC;
+
+ANSWER: 2019-01-15
+
 ## Question 5. The number of passengers
 
 In 2019-01-01 how many trips had 2 and 3 passengers?
@@ -77,6 +104,19 @@ In 2019-01-01 how many trips had 2 and 3 passengers?
 - 2: 1282 ; 3: 254
 - 2: 1282 ; 3: 274
 
+SELECT 
+	CAST(lpep_pickup_datetime AS DATE) AS "day",
+	passenger_count,
+	COUNT(CAST(lpep_pickup_datetime AS DATE))
+FROM 
+	green_taxi_trips t
+WHERE 
+	(passenger_count = 2 OR passenger_count = 3)
+GROUP BY
+1,2
+ORDER BY day ASC
+
+ANSWER: 2: 1282 ; 3: 254
 
 ## Question 6. Largest tip
 
@@ -90,6 +130,18 @@ Note: it's not a typo, it's `tip` , not `trip`
 - South Ozone Park
 - Long Island City/Queens Plaza
 
+SELECT
+	*
+FROM 
+	green_taxi_trips t JOIN zones zpu ON t."PULocationID" = zpu."LocationID"
+	JOIN zones zdo ON t."DOLocationID" = zdo."LocationID"
+WHERE
+	zpu."Zone" = 'Astoria'
+order by 
+	tip_amount DESC
+LIMIT 1;
+
+ANSWER: Long Island City/Queens Plaza
 
 ## Submitting the solutions
 
